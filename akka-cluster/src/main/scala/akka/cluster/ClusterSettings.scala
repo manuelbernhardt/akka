@@ -202,4 +202,15 @@ final class ClusterSettings(val config: Config, val systemName: String) {
     val VerboseGossipLogging: Boolean = cc.getBoolean("debug.verbose-gossip-logging")
   }
 
+  object Rapid {
+    val DefaultTimeout = cc.getMillisDuration("rapid.messaging.default-timeout")
+    val DefaultRetries = cc.getInt("rapid.messaging.default-retries")
+    val BatchingWindow = cc.getMillisDuration("rapid.batching-window")
+    val ConsensusBatchingWindow = cc.getMillisDuration("rapid.consensus-batching-window")
+    val ConsensusFallbackTimeoutBaseDelay = cc.getMillisDuration("rapid.consensus-fallback-timeout-base-delay")
+    val MembershipViewUpdateTimeout = cc.getMillisDuration("rapid.membership-view-update-timeout")
+    val UseConsistentHashBroadcasting = cc.getBoolean("rapid.use-consistent-hash-broadcasting")
+    val ActAsConsistentHashBroadcaster = cc.getBoolean("rapid.act-as-consistent-hash-broadcaster")
+  }
+
 }

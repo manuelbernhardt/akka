@@ -16,16 +16,11 @@ import scala.annotation.tailrec
 import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.util.control.NoStackTrace
-
 import akka.Done
 import akka.NotUsed
-import akka.actor.ActorRef
-import akka.actor.ActorSelectionMessage
-import akka.actor.Address
-import akka.actor.Cancellable
-import akka.actor.Dropped
+import akka.actor.{ActorRef, ActorSelectionMessage, ActorSystem, Address, Cancellable, Dropped}
 import akka.dispatch.sysmsg.SystemMessage
-import akka.event.Logging
+import akka.event.{LogSource, Logging}
 import akka.remote.DaemonMsgCreate
 import akka.remote.PriorityMessage
 import akka.remote.RemoteActorRef
@@ -1048,10 +1043,11 @@ private[remote] class Association(
 /**
  * INTERNAL API
  */
-private[remote] class AssociationRegistry(createAssociation: Address => Association) {
+private[remote] class AssociationRegistry(system: ActorSystem, createAssociation: Address => Association) {
   private[this] val associationsByAddress = new AtomicReference[Map[Address, Association]](Map.empty)
   private[this] val associationsByUid = new AtomicReference[ImmutableLongMap[Association]](ImmutableLongMap.empty)
 
+  private val log = Logging.getLogger(system, LogSource(classOf[AssociationRegistry]))
   /**
    * @throws ShuttingDown if called while the transport is shutting down
    */
@@ -1064,6 +1060,9 @@ private[remote] class AssociationRegistry(createAssociation: Address => Associat
         val newMap = currentMap.updated(remoteAddress, newAssociation)
         if (associationsByAddress.compareAndSet(currentMap, newMap)) {
           newAssociation.associate() // start it, only once
+          // rapid test - log amount of associations per node
+          log.info("""{"associations": {}}""", currentMap.size)
+
           newAssociation
         } else
           association(remoteAddress) // lost CAS, retry

@@ -98,6 +98,9 @@ object Dependencies {
 
     val logback = "ch.qos.logback" % "logback-classic" % logbackVersion // EPL 1.0
 
+    // rapid
+    val rapid = "com.vrg" % "rapid" % "1.0-SNAPSHOT"
+
     object Docs {
       val sprayJson = "io.spray" %% "spray-json" % "1.3.5" % "test"
       val gson = "com.google.code.gson" % "gson" % "2.8.6" % "test"
@@ -208,7 +211,7 @@ object Dependencies {
 
   val multiNodeTestkit = l ++= Seq(netty)
 
-  val cluster = l ++= Seq(Test.junit, Test.scalatest.value)
+  val cluster = l ++= Seq(rapid, "com.typesafe.akka" %% "akka-http" % "10.1.10", "org.hdrhistogram" % "HdrHistogram" % "2.1.12", Test.junit, Test.scalatest.value)
 
   val clusterTools = l ++= Seq(Test.junit, Test.scalatest.value)
 

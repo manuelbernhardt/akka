@@ -412,6 +412,7 @@ private[remote] abstract class ArteryTransport(_system: ExtendedActorSystem, _pr
       settings.Advanced.OutboundMessageQueueSize * settings.Advanced.OutboundLanes * 3)
 
   private val associationRegistry = new AssociationRegistry(
+    system,
     remoteAddress =>
       new Association(
         this,
